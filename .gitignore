@@ -1,0 +1,4 @@
+__pycache__/
+*.log
+venv/
+tasks.json
