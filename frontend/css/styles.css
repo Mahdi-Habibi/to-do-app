@@ -1,0 +1,88 @@
+@font-face {
+  font-family: open-sans;
+  src: url(../fonts/OpenSans-Regular.ttf);
+}
+@font-face {
+  font-family: open-sans-bld;
+  src: url(../fonts/OpenSans-Bold.ttf);
+}
+@font-face {
+  font-family: open-sans-lght;
+  src: url(../fonts/OpenSans-Light.ttf);
+}
+* {
+  margin: 0;
+  padding: 0;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+}
+
+body {
+  font: 16px open-sans;
+  margin: 0;
+  padding: 0;
+  background-color: #F3F7EC;
+  color: #006989;
+}
+
+ul, ol, li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: #006989;
+}
+
+button {
+  font: 16px open-sans;
+  color: #006989;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+button:hover {
+  color: #005C78;
+}
+
+.to-do-lst-hdr {
+  display: flex;
+  flex-direction: column;
+  font: 32px open-sans-bld;
+  text-align: center;
+  padding: 50px 0;
+  position: relative;
+}
+.to-do-lst-hdr::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border: 1px solid #006989;
+}
+
+.to-do-lst {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0;
+}
+.to-do-lst .to-do-lst-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid #006989;
+}
+.to-do-lst .to-do-lst-item .to-do-lst-item-txt {
+  font: 20px open-sans;
+  color: #006989;
+}
+.to-do-lst .to-do-lst-item-chk:checked + .to-do-lst-item-txt {
+  text-decoration: line-through;
+  color: #E88D67;
+}/*# sourceMappingURL=styles.css.map */
