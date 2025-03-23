@@ -6,41 +6,102 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="./css/bootstrap.min.css">
         <link href="./css/styles.css" rel="stylesheet">
+        <script>
+            async function fetchTasks() {
+                const response = await fetch('http://127.0.0.1:5000/tasks');
+                const tasks = await response.json();
+                localStorage.setItem('tasks', JSON.stringify(tasks)); // Save tasks to local storage
+                renderTasks(tasks);
+            }
+
+            function loadTasksFromLocalStorage() {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                renderTasks(tasks);
+            }
+
+            function renderTasks(tasks) {
+                const taskList = document.querySelector('.to-do-lst');
+                taskList.innerHTML = ''; // Clear existing tasks
+                tasks.forEach(task => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'to-do-lst-item';
+                    listItem.innerHTML = `
+                        <input type="checkbox" class="to-do-lst-item-chk">
+                        <span class="to-do-lst-item-txt">${task.task}</span>
+                        <button class="to-do-lst-item-del" onclick="deleteTask(${task.id})">Delete</button>
+                    `;
+                    taskList.appendChild(listItem);
+                });
+            }
+
+            async function deleteTask(taskId) {
+                try {
+                    const response = await fetch(
+                        `http://127.0.0.1:5000/tasks/${taskId}`,
+                        {method: 'DELETE'}
+                    );
+                    if (response.ok) {
+                        fetchTasks(); // Refresh the task list
+                    } else {
+                        console.error('Failed to delete task:', await response.json());
+                    }
+                } catch (error) {
+                    console.error('Error deleting task:', error);
+                }
+            }
+            // Attach deleteTask to the global scope
+            window.deleteTask = deleteTask;
+
+            async function addTask() {
+                const taskInput = document.querySelector('#new-task');
+                const task = taskInput
+                    .value
+                    .trim();
+                console.log('Task to add:', task); // Debug log
+                if (task) {
+                    try {
+                        const response = await fetch('http://127.0.0.1:5000/tasks', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({task})
+                        });
+                        console.log('Response status:', response.status); // Debug log
+                        if (response.ok) {
+                            taskInput.value = ''; // Clear input
+                            fetchTasks(); // Refresh the task list
+                        } else {
+                            console.error('Failed to add task:', await response.json());
+                        }
+                    } catch (error) {
+                        console.error('Error adding task:', error);
+                    }
+                } else {
+                    console.warn('Task input is empty.');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                loadTasksFromLocalStorage(); // Load tasks from local storage
+                fetchTasks(); // Fetch tasks from the backend
+                // document.querySelector('#add-task-btn').addEventListener('click', addTask);
+            });
+        </script>
+        <script src="./js/script.js"></script>
     </head>
     <body>
         <!-- header -->
         <div class="container">
             <h1 class="to-do-lst-hdr">TO DO LIST</h1>
         </div>
+        <div class="container">
+            <input type="text" id="new-task" placeholder="Enter a new task">
+            <button id="add-task-btn">Add Task</button>
+        </div>
         <!-- list -->
-         <div class="container">
-            <ul class="to-do-lst">
-                <li class="to-do-lst-item">
-                    <input type="checkbox" class="to-do-lst-item-chk">
-                    <span class="to-do-lst-item-txt">Task 1</span>
-                    <button class="to-do-lst-item-del">Delete</button>
-                </li>
-                <li class="to-do-lst-item">
-                    <input type="checkbox" class="to-do-lst-item-chk">
-                    <span class="to-do-lst-item-txt">Task 2</span>
-                    <button class="to-do-lst-item-del">Delete</button>
-                </li>
-                <li class="to-do-lst-item">
-                    <input type="checkbox" class="to-do-lst-item-chk">
-                    <span class="to-do-lst-item-txt">Task 3</span>
-                    <button class="to-do-lst-item-del">Delete</button>
-                </li>
-                <li class="to-do-lst-item">
-                    <input type="checkbox" class="to-do-lst-item-chk">
-                    <span class="to-do-lst-item-txt">Task 4</span>
-                    <button class="to-do-lst-item-del">Delete</button>
-                </li>
-                <li class="to-do-lst-item">
-                    <input type="checkbox" class="to-do-lst-item-chk">
-                    <span class="to-do-lst-item-txt">Task 5</span>
-                    <button class="to-do-lst-item-del">Delete</button>
-                </li>
-            </ul>
-         </div>
+        <div class="container">
+            <ul class="to-do-lst"></ul>
+        </div>
     </body>
 </html>
